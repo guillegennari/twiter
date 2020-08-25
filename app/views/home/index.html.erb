@@ -6,12 +6,40 @@
 <% end %>
 
 <% @tweets.each do |tweet| %>
-    <div class="col-12 border border-info p-3 mt-2">
-        <%= image_tag (tweet.user.photo_url), :class => "avatar-in-tweet rounded" %>
-        <%= tweet.content %>
-        <hr/>
-        <div class="float-right">
-            <%= tweet.likes.count %> likes | 0 re-tweets
+    <div class="col-4 border border-info p-3 mt-2 card-tweet">
+        <div class="row">
+            <div class="col-1">
+                <%= image_tag (tweet.user.photo_url), :class => "avatar-in-tweet rounded" %>
+            </div>
+            <div class="col-11">
+                <span class="username"><%= tweet.user.username %> dice:</span><br/>
+                <div class="tweet-content p-3 mb-2"><%= tweet.content %></div>
+                <% if tweet.is_retweet? %>
+                    <%= link_to "Retweet...", tweet.tweet_ref%>
+                <%end%>
+            </div>
+
+            <div class="col-12">
+                <div class="p3 text-right mb-2 tweet-options">
+                    <span>
+                        <%= tweet.likes.count %>
+                        <% if tweet.is_liked?(current_user) %>
+                            <%= link_to '<i class="fas fa-thumbs-up text-info"></i>'.html_safe, tweet_likes_path(tweet), method: :post %>
+                        <% else %>
+                            <%= link_to '<i class="far fa-thumbs-up text-muted"></i>'.html_safe, tweet_likes_path(tweet), method: :post %>
+                        <% end %>
+                    </span>
+                    |
+                    <span>
+                        <%= tweet.count_rt %>
+                        <% if tweet.count_rt > 0 %>
+                            <%= link_to '<i class="fas fa-retweet text-info"></i>'.html_safe, tweet_retweet_path(tweet), method: :post%>
+                        <% else %>
+                            <%= link_to '<i class="fas fa-retweet text-muted"></i>'.html_safe, tweet_retweet_path(tweet), method: :post%>
+                        <% end %>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 <% end %>
