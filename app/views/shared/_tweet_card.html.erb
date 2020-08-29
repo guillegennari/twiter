@@ -1,0 +1,46 @@
+<div class="col-12 border border-info p-3 mt-2 card-tweet">
+        <div class="row">
+            <div class="col-1">
+                <%= image_tag (tweet.user.photo_url), :class => "avatar-in-tweet rounded" %><br/>
+                <% if user_signed_in? && current_user != tweet.user %>
+                    <%= link_to (current_user.is_followed?(tweet.user) ? '<i class="fas fa-eye-slash text-info"></i> ' : '<i class="fas fa-eye text-info"></i> ').html_safe, users_follow_path(tweet.user.id), class:"", 'title' => (current_user.is_followed?(tweet.user) ? "Dejar de seguir" : "Seguir"),
+                        'data-toggle' => 'tooltip',
+                        'data-placement' => 'right',
+                        method: :post
+                    %>
+                <% end %>
+            </div>
+            <div class="col-11">
+                <span class="username"><%= tweet.user.username %> dice:</span><br/>
+                <span><%= link_to '<i class="fas fa-history"></i>'.html_safe+distance_of_time_in_words(Time.now, tweet.created_at), tweet %></span><br/>
+                <div class="tweet-content p-3 mb-2"><%= tweet.content %></div>
+                <% if tweet.is_retweet? %>
+                    <%= link_to "Retweet...", tweet.tweet_ref%>
+                <%end%>
+            </div>
+
+            <div class="col-12">
+                <div class="p3 text-right mb-2 tweet-options">
+                    <% if user_signed_in? %>
+                        <span>
+                            <%= tweet.likes.count %>
+                            <% if tweet.is_liked?(current_user) %>
+                                <%= link_to '<i class="fas fa-thumbs-up text-info"></i>'.html_safe, tweet_likes_path(tweet), method: :post %>
+                            <% else %>
+                                <%= link_to '<i class="far fa-thumbs-up text-muted"></i>'.html_safe, tweet_likes_path(tweet), method: :post %>
+                            <% end %>
+                        </span>
+                        |
+                        <span>
+                            <%= tweet.count_rt %>
+                            <% if tweet.count_rt > 0 %>
+                                <%= link_to '<i class="fas fa-retweet text-info"></i>'.html_safe, tweet_retweet_path(tweet), method: :post%>
+                            <% else %>
+                                <%= link_to '<i class="fas fa-retweet text-muted"></i>'.html_safe, tweet_retweet_path(tweet), method: :post%>
+                            <% end %>
+                        </span>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
