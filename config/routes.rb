@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  ActiveAdmin.routes(self)
   #get 'users/follow'
   resources :tweets do
   post 'likes', to: 'tweets#likes'
