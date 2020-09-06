@@ -4,14 +4,21 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  has_many :friends
-  has_many :tweets
-  has_many :likes
+  
+  before_destroy :delete_friend
+
+  has_many :friends, dependent: :destroy
+  has_many :tweets, dependent: :destroy
+  has_many :likes, dependent: :delete_all
   has_many :liked_tweets, :through => :likes, :source => :tweet
 
   #def arr_friends_id
    # self.friends.pluck(:friend_id)
   #end
+
+  def delete_friend
+    Friend.where(friend_id: self.id).destroy_all
+  end
 
   def users_followed
     arr_ids = self.friends.pluck(:friend_id)
@@ -38,5 +45,9 @@ class User < ApplicationRecord
     self.tweets.where.not(rt_ref:nil).count
   end
 
+  def self.authenticate(email, password)
+    user = User.find_for_authentication(email: email)
+    user&.valid_password?(password) ? user : nil
+  end
 
 end

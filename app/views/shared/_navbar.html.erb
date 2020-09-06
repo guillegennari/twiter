@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-    <a class="navbar-brand" href=" <%= root_path %>">MyTwitter</a>
+    <a class="navbar-brand" href=" <%= root_path %>">Tuiter.fruna</a>
+    <img src="/guruguru.png" alt="guruguru" class="avatar rounded-circle" style="height: 65px">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -8,7 +9,16 @@
       <ul class="navbar-nav ml-auto">
         <% if user_signed_in? %>
           <li class="nav-item">
-            <%= link_to 'Cerrar Sesión', destroy_user_session_path, method: :delete, class: 'nav-link' %>
+            <%= form_tag(root_path, method: :get) do %>
+              
+                <%= link_to "Limpiar", root_path, :class => "btn btn-dark"%>
+                <%= text_field_tag(:search, params[:search], :class => "form-control d-inline w-50") %>
+                <%= submit_tag("Buscar", :class => "btn btn-info") %>
+             
+            <% end %>  
+          </li> 
+          <li class="nav-item">
+            <%= link_to 'Cerrar Sesión', destroy_user_session_path, method: :get, class: 'nav-link' %>
           </li>
         <% else %>
           <li class="nav-item">
@@ -16,8 +26,8 @@
           </li>
           <li class="nav-item">
             <%= link_to 'Login', new_user_session_path, class: 'nav-link' %>
-          </li>
-          <% end %>
+          </li>   
+        <% end %>
       </ul>
     </div>
   </div>  

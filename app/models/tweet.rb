@@ -1,4 +1,8 @@
 class Tweet < ApplicationRecord
+  include ActionView::Helpers::UrlHelper
+
+  before_destroy :delete_rt
+  before_save :hashtag
   validates :content, presence: true
  
   belongs_to :user
@@ -7,7 +11,23 @@ class Tweet < ApplicationRecord
 
   paginates_per 10
 
-  scope :tweets_for_me, -> (user){where(user_id: user.friends.pluck(:friend_id))}
+  scope :tweets_for_me, -> (user){where(user_id: user.friends.pluck(:friend_id).push(user.id))}
+
+  def delete_rt
+    Tweet.where(rt_ref: self.id).update_all(rt_ref: nil)
+  end
+
+  def hashtag
+    new_array = []
+    self.content.split(" ").each do |word|
+      if word.start_with?("#")
+        word_parsed = word.sub '#','%23'
+        word = link_to( word, Rails.application.routes.url_helpers.root_path+"?search=#{word_parsed}" )
+      end
+      new_array.push(word)
+    end
+    self.content = new_array.join(" ")
+  end
 
   def is_liked?(user)
     if self.liking_users.include?(user)
